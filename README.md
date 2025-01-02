@@ -82,8 +82,4 @@ if __name__ == "__main__":
     interface.launch(share=True)
 
 ```
-# Open the README.md and the INDEX.md
-with open('README.md', 'a') as readme_file:
-    with open('INDEX.md', 'r') as index_file:
-        readme_file.write("\n\n# Index\n")  # Optional: Add a heading for the section
-        readme_file.write(index_file.read())  # Append the content of INDEX.md
+[See the Index](./INDEX.md)
