@@ -1,3 +1,9 @@
+---
+title: CVE_Explorer
+app_file: app.py
+sdk: gradio
+sdk_version: 5.9.1
+---
 # CVE_Explorer
 
 **CVE_Explorer** is a powerful tool designed to fetch and display detailed information about Common Vulnerabilities and Exposures (CVEs) from multiple trusted sources, such as the National Vulnerability Database (NVD) and the CNA API. It allows users to interact with the CVE data, browse random CVEs, and save CVE details to CSV files for offline use.
