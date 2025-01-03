@@ -1,85 +1,93 @@
 # CVE_Explorer
 
+**CVE_Explorer** is a powerful tool designed to fetch and display detailed information about Common Vulnerabilities and Exposures (CVEs) from multiple trusted sources, such as the National Vulnerability Database (NVD) and the CNA API. It allows users to interact with the CVE data, browse random CVEs, and save CVE details to CSV files for offline use.
+
+## Features
+
+- **Fetch CVE Details**: Retrieve comprehensive details about CVEs from the NVD and CNA API.
+- **Random CVEs**: View random CVEs to explore various vulnerabilities.
+- **CSV Export**: Save CVE details to a CSV file for easy reference and sharing.
+- **User-Friendly Interface**: Built with Gradio to offer an intuitive and easy-to-use web interface.
+- **Multi-Source Support**: Integrates data from NVD and CNA to provide diverse perspectives on CVE information.
+
+## Installation
+
+Follow these steps to set up CVE_Explorer on your local machine:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/NIZBAN786/CVE_Explorer.git
+cd CVE_Explorer
 ```
-import gradio as gr # type: ignore
-import requests # type: ignore
-import nvdlib # type: ignore
 
-def fetch_from_nvd(cve_id):
-    result = nvdlib.searchCVE(cveId=cve_id)
-    nvd_output = ""
+### 2. Install the Required Dependencies
 
-    if result:
-        cve = result[0]  # First matching result
-        nvd_output += f"\n🔍 CVE Details (From NVD):\n"
-        nvd_output += f"🆔 CVE ID: {cve.id}\n"
-        nvd_output += f"📅 Published Date: {cve.published}\n"
-        nvd_output += f"📅 Last Modified Date: {cve.lastModified}\n"
-        nvd_output += f"📝 Description: {cve.descriptions[0].value}\n"
-        nvd_output += f"🔗 Reference Links:\n"
-        for ref in cve.references:
-            nvd_output += f"   - {ref.url}\n"
+Ensure you have Python 3.x installed, then install the necessary dependencies:
 
-        # Display CVSS v3.1 Scores
-        if hasattr(cve, 'v31score') and cve.v31score:
-            nvd_output += f"⚠️ Severity: N/A\n"  # Severity as N/A (no baseSeverity attribute)
-            nvd_output += f"📊 Base Score: {cve.v31score}\n"
-        else:
-            nvd_output += f"⚠️ Severity: N/A\n"
-            nvd_output += f"📊 Base Score: N/A\n"
-    else:
-        nvd_output = "\n❌ No details found for the provided CVE ID in NVD."
-
-    return nvd_output
-
-
-def fetch_from_cna(cve_id):
-    url = f"https://cveawg.mitre.org/api/cve/{cve_id}"
-    response = requests.get(url)
-    cna_output = ""
-
-    if response.status_code == 200:
-        data = response.json()
-        cna_output += f"\n🔍 CVE Details (From CNA API):\n"
-        cna_output += f"🆔 CVE ID: {data['cveMetadata']['cveId']}\n"
-        cna_output += f"📅 Published Date: {data['cveMetadata']['datePublished']}\n"
-        cna_output += f"📝 Description: {data['containers']['cna']['descriptions'][0]['value']}\n"
-
-        # Display CVSS v3.1 Scores
-        if 'metrics' in data['containers']['cna'] and len(data['containers']['cna']['metrics']) > 0:
-            cvss = data['containers']['cna']['metrics'][0]['cvssV3_1']
-            cna_output += f"⚠️ Severity: {cvss['baseSeverity']}\n"
-            cna_output += f"📊 Base Score: {cvss['baseScore']}\n"
-        else:
-            cna_output += f"⚠️ Severity: N/A\n"
-            cna_output += f"📊 Base Score: N/A\n"
-
-        cna_output += f"🔗 Reference Links:\n"
-        for ref in data['containers']['cna']['references']:
-            cna_output += f"   - {ref['url']}\n"
-    else:
-        cna_output = "\n❌ No details found in CNA API or invalid CVE ID."
-
-    return cna_output
-
-
-def get_cve_info(cve_id):
-    nvd_details = fetch_from_nvd(cve_id)
-    cna_details = fetch_from_cna(cve_id)
-    return nvd_details, cna_details
-
-
-# Create Gradio Interface
-interface = gr.Interface(
-    fn=get_cve_info,
-    inputs=gr.Textbox(label="Enter CVE ID (e.g., CVE-2024-32881)"),
-    outputs=[gr.Textbox(label="NVD Details", interactive=False), gr.Textbox(label="CNA Details", interactive=False)],
-    title="CVE Information Finder",
-    description="Enter a CVE ID to get detailed information from the NVD and CNA ."
-)
-
-if __name__ == "__main__":
-    interface.launch(share=True)
-
+```bash
+pip install -r requirements.txt
 ```
-[See the Index](./INDEX.md)
+
+### 3. Verify Installation
+
+Ensure everything is set up correctly by checking the installed packages:
+
+```bash
+pip list
+```
+
+You should see the list of packages, including Gradio and any other dependencies mentioned in `requirements.txt`.
+
+## Usage
+
+### 1. Run the Application
+
+Start the application with the following command:
+
+```bash
+python app.py
+```
+
+### 2. Access the Gradio Interface
+
+Once the application starts, open the provided local server URL (typically `http://localhost:7860`) in your browser to interact with the web interface.
+
+### 3. Fetch CVE Details
+
+- Enter a CVE ID (e.g., `CVE-2024-32881`) into the input field to fetch detailed information about a specific vulnerability from the NVD and CNA API.
+  
+### 4. View Random CVEs
+
+Click the **"Refresh"** button to display random CVEs, giving you an opportunity to explore various vulnerabilities.
+
+### 5. Export to CSV
+
+- Use the "Save to CSV" button to export the displayed CVE details to a CSV file for offline use.
+
+## Project Structure
+
+The repository contains the following key files:
+
+- **[app.py](app.py)**: Main application file containing the logic for fetching and displaying CVE details.
+- **[requirements.txt](requirements.txt)**: Lists all dependencies required for the project.
+- **[README.md](README.md)**: This file, which provides an overview of the project and setup instructions.
+  
+## Contributing
+
+We welcome contributions! If you would like to improve this tool, feel free to submit a Pull Request. When contributing, please adhere to the following guidelines:
+
+- **Fork** the repository.
+- Create a **new branch** for your changes.
+- **Commit** your changes with clear and concise messages.
+- **Open a pull request** to the `main` branch.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE), which allows for personal, academic, or commercial use.
+
+## Author
+
+- **GitHub**: [NIZBAN786](https://github.com/NIZBAN786)
+
+---
